@@ -23,22 +23,24 @@ class CategoryItem(scrapy.Item):
 
 class FreshmartItem(scrapy.Item):
     name = scrapy.Field()
-    description = scrapy.Field()
+    # description = scrapy.Field()
+    content = scrapy.Field()
     category = scrapy.Field()
     subcategory = scrapy.Field()
     price = scrapy.Field()
     price_old = scrapy.Field()
     quantity_postfix = scrapy.Field()
     status = scrapy.Field()
+    order_info_raw = scrapy.Field()
     order_info = scrapy.Field()
     active = scrapy.Field()
 
     slug = scrapy.Field()
     product_id = scrapy.Field()
-    content = scrapy.Field()
-    image = scrapy.Field()
 
+    image_urls = scrapy.Field()
     images = scrapy.Field()
+
     # _big.jpeg _obj.jpeg _cat.jpeg
     features = scrapy.Field()
     goods_similar = scrapy.Field()

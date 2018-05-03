@@ -123,3 +123,6 @@ gen### VirtualEnv template
 pyvenv.cfg
 pip-selfcheck.json
 
+*.csv
+/tutorial/tutorial/spiders/images/
+
