@@ -2,30 +2,9 @@
 from os.path import basename
 from urllib.parse import urlsplit
 
-# from bs4 import BeautifulSoup
 from scrapy.spiders import SitemapSpider
 
 from tutorial.items import FreshmartItem
-
-
-# class FreshmartSpider(scrapy.Spider):
-#     name = 'freshmart'
-#     allowed_domains = ['freshmart.com.ua']
-#     start_urls = ['https://freshmart.com.ua/sitemap.xml']
-#     namespaces = {
-#         'sitemap': 'http://www.sitemaps.org/schemas/sitemap/0.9',
-#     }
-#     itertag = 'loc'
-#
-#     def parse_node(self, response, node):
-#         self.logger.info('Hi, this is a <%s> node!: %s', self.itertag, ''.join(node.extract()))
-#
-#         item = FreshmartItem()
-#         # item['id'] = node.xpath('@id').extract()
-#         # item['name'] = node.xpath('name').extract()
-#         # item['description'] = node.xpath('description').extract()
-#         item['path'] = node.xpath('description').extract()
-#         return item
 
 
 class FreshmartSpider(SitemapSpider):
@@ -36,20 +15,6 @@ class FreshmartSpider(SitemapSpider):
         ('/product/', 'parse_product'),
         ('/catalog/', 'parse_category'),
     ]
-
-    # def parse(self, response):
-    #     items = []
-    #     for sel in response.xpath('//loc'):
-    #         item = FreshmartItem()
-    #         item['link'] = sel.xpath('@href').extract()
-    #         items.append(item)
-    #     return items
-
-    # def start_requests(self):
-    #     for url in self.sitemap_urls:
-    #         if url.startswith('http://'):
-    #             url = 'https.{}'.format(url[4:])
-    #         yield Request(url, self._parse_sitemap)
 
     def parse_product(self, response):
         item = FreshmartItem()
@@ -66,9 +31,7 @@ class FreshmartSpider(SitemapSpider):
         item['quantity_postfix'] = response.css(".quantity-postfix::text").extract_first()
         item['status'] = response.css(
             "#slider_recipe > li:nth-child(1) > div.status > div::attr(class)").extract_first()
-        # item.order_info = scrapy.Field()
         item['order_info_raw'] = response.css(".product__data .product__order-info").extract_first()
-        # item.order_mess = scrapy.Field()
         if item['price'] is None:
             item['active'] = False
         else:
@@ -80,11 +43,6 @@ class FreshmartSpider(SitemapSpider):
         item['slug'] = '-'.join(filename_splitted[:-1])
         item['product_id'] = filename_splitted[-1]
 
-        # item['content'] = response.css("#product_description > .textbox__content").extract_first()
-        # item['content'] = self.clear_content(response.css("#product_description > .textbox__content").extract_first())
-
-        # item['image'] = response.css("head > meta[property='og:image']::attr(content)").extract_first()
-        #
         item['image_urls'] = response.css("#tab_photo_ul > li > a > img::attr(src)").extract()
         # # _big.jpeg _obj.jpeg _cat.jpeg
 
@@ -94,7 +52,6 @@ class FreshmartSpider(SitemapSpider):
             ".product__feature > .product__feature-field > .product__feature-value::text").extract()
         item['features'] = dict(zip(list(map(lambda x: x[:-1], features_names)), features_values))
 
-        # item['goods_similar'] = response.css("#goods_similar a.catalog__picture::attr(href)").extract()
         goods_similar = response.css("#goods_similar a.catalog__picture::attr(href)").extract()
 
         item['goods_similar'] = list(map(lambda similar_url: basename(urlsplit(similar_url).path)[:-5], goods_similar))
@@ -105,17 +62,3 @@ class FreshmartSpider(SitemapSpider):
     def parse_category(self, response):
         # TODO: Need create parse category
         self.logger.info('Hi, this is a cat node!')
-
-    # @staticmethod
-    # def clear_content(content):
-    #     soup = BeautifulSoup(content)
-    #     # print(soup.prettify())
-    #     # for tag in soup():
-    #     #     for attribute in ["class", "id", "name", "style"]:
-    #     #         del tag[attribute]
-    #     #
-    #     # div = soup.find('div')
-    #     # print(''.join(map(str, div.contents)))
-    #     # # return cleared_content
-    #     # print(div.prettify())
-    #     return BeautifulSoup(content).text

@@ -23,7 +23,6 @@ class CategoryItem(scrapy.Item):
 
 class FreshmartItem(scrapy.Item):
     name = scrapy.Field()
-    # description = scrapy.Field()
     content = scrapy.Field()
     category = scrapy.Field()
     subcategory = scrapy.Field()
